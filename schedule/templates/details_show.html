@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+</head>
+<style>
+    *{
+        margin: 0;
+        padding: 0;
+        margin-bottom: 10px;
+        font-family: "Comic Sans MS", cursive, sans-serif;
+    }
+    body{
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .desc {
+        display: grid;
+        grid-template-columns: auto auto;
+        height: 300px;
+    } 
+    .d{
+        grid-column: 1;
+        width: fit-content;
+    }
+    #back{
+        align-self: flex-end;
+        margin: -50px 0 50px 0;
+    } 
+    
+</style>
+<body>
+    <h1>TV Show {{id}}</h1>
+    <p id='back'><a href="/shows">Go Back</a></p>
+    <p>Title: {{title}}</p>
+    <p>Network: {{network}}</p>
+    <p>Release Date: {{release_date}}</p>
+    <div class="desc">
+        <p. class="d">Description:</p>
+        <div>{{desc}}</div>
+    </div>
+
+    <p>Last Updated: {{update_time}}</p>
+    <p><a href="/shows/{{id}}/update">Edit</a>|<a href="/shows/{{id}}/delete">Delete</a></p>
+</body>
+</html>
