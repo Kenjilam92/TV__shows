@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from schedule.models import Show
+from django.contrib import messages
 # from datetime import datetime
 
 def homeroute(request):
@@ -26,13 +27,21 @@ def create(request):
     print("A new show was created")
     print(request.method)
     print(request.POST)
-    a=request.POST['title']
-    b=request.POST['network']
-    c=request.POST['release_date']
-    d=request.POST['desc']
-    Show.objects.create(title=a, network=b, release_date=c, desc=d)
-    last=Show.objects.last()
-    return redirect(f"/shows/{last.id}")
+    # *************Cleaning input data(empty input, too short, etc.)**************
+    errors= Show.objects.basic_validator_bonus(request.POST)
+    if len(errors)>0:
+        for k, v in errors.items():
+            messages.error (request,v)
+        return redirect('/shows/new')
+    # ******************************************************************************
+    else: 
+        a=request.POST['title']
+        b=request.POST['network']
+        c=request.POST['release_date']
+        d=request.POST['desc']
+        Show.objects.create(title=a, network=b, release_date=c, desc=d)
+        last=Show.objects.last()
+        return redirect(f"/shows/{last.id}")
 
 def read(request,x):
     print("*"*100)
@@ -58,23 +67,31 @@ def update(request,x):
         "id": selected_show.id,
         "title": selected_show.title,
         "network":selected_show.network,
-        "release_date": selected_show.release_date.strftime("%Y-%m-%d"),
+        "release_date": selected_show.release_date.strftime('%Y-%m-%d'),
         "desc": selected_show.desc,
     }
     return render(request,'update_shows.html',context)
 
 def edit(request,x):
     print("*"*100)
-    print("A new show was edited")
+    print("A show was edited")
     print(request.method)
     print(request.POST)
-    selected_show=Show.objects.get(id=int(x))
-    selected_show.title=request.POST['title']
-    selected_show.network=request.POST['network']
-    selected_show.release_date=request.POST['release_date']
-    selected_show.desc=request.POST['desc']
-    selected_show.save()
-    return redirect(f"/shows/{selected_show.id}")
+    # *************Cleaning input data(empty input, too short, etc.)**************
+    errors= Show.objects.basic_validator_bonus(request.POST)
+    if len(errors)>0:
+        for k, v in errors.items():
+            messages.error (request, v)
+        return redirect(f'/shows/{x}/update')
+    # ******************************************************************************
+    else: 
+        selected_show=Show.objects.get(id=int(x))
+        selected_show.title=request.POST['title']
+        selected_show.network=request.POST['network']
+        selected_show.release_date=request.POST['release_date']
+        selected_show.desc=request.POST['desc']
+        selected_show.save()
+        return redirect(f"/shows/{selected_show.id}")
 
 def delete(request,x):
     print("*"*100)
